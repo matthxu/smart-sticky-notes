@@ -7,4 +7,5 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables')
 }
 
+// Creating client to communicate with supabase API
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
