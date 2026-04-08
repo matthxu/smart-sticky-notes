@@ -1,5 +1,7 @@
 .env
 SmartNotes-Overview.pdf
+CLAUDE.md
+.claudeignore
 
 # Logs
 logs
