@@ -9,19 +9,19 @@ export function Signup() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+  const handleSignup = async (e: React.SubmitEvent) => {
+      e.preventDefault()
+      setLoading(true)
+      setError("")
 
-    const { error } = await supabase.auth.signUp({ email, password })
+      const { error } = await supabase.auth.signUp({ email, password })
 
-    if (error) {
-      setError(error.message)
-      setLoading(false)
-    } else {
-      navigate('/')
-    }
+      if (error) {
+          setError(error.message)
+          setLoading(false)
+      } else {
+          navigate("/")
+      }
   }
 
   return (

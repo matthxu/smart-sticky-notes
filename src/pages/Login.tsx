@@ -9,7 +9,7 @@ export function Login() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.SubmitEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
