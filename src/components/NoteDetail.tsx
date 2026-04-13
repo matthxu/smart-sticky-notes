@@ -1,0 +1,1 @@
+// opens note view with editable fields, calls updateNote on change
