@@ -29,10 +29,26 @@ export function CreateNoteForm({ refetch }: CreateNoteFormProps) {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" />
-            <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Body" />
-            <button type="submit">Add Note</button>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2 w-full max-w-md">
+            <input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Title"
+                className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-300"
+            />
+            <textarea
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                placeholder="Body"
+                rows={3}
+                className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-300 resize-none"
+            />
+            <button
+                type="submit"
+                className="self-end bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-medium text-sm px-4 py-2 rounded-md transition-colors"
+            >
+                Add Note
+            </button>
         </form>
     )
 }

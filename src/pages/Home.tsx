@@ -13,14 +13,16 @@ export function Home() {
         return <p>Error: {error}</p>
     }
     return (
-        <div>
-            <h1>Home</h1>
-            <CreateNoteForm refetch={refetch} />
-            <ul>
-                {notes.map((note) => (
-                    <NoteCard key={note.id} note={note} />
-                ))}
-            </ul>
+        <div className="min-h-screen bg-gray-50 px-6 py-10">
+            <div className="max-w-5xl mx-auto">
+                <h1 className="text-2xl font-bold text-gray-800 mb-6">My Notes</h1>
+                <CreateNoteForm refetch={refetch} />
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-8">
+                    {notes.map((note) => (
+                        <NoteCard key={note.id} note={note} />
+                    ))}
+                </div>
+            </div>
         </div>
     )
 }
