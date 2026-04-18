@@ -1,6 +1,6 @@
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { createNote } from "@/lib/notes"
-import { useAuth } from '@/lib/auth-context'
+import { useAuth } from "@/lib/auth-context"
 
 // explicitly describing type of prop (because typescript)
 interface CreateNoteFormProps {
@@ -13,6 +13,22 @@ export function CreateNoteForm({ refetch }: CreateNoteFormProps) {
     const [body, setBody] = useState("")
     const { user } = useAuth()
     const [isExpanded, setIsExpanded] = useState(false)
+    const formRef = useRef<HTMLFormElement>(null)
+
+    // attach a click listener to the entire document on mount
+    // every click on the page runs handleClickOutside
+    useEffect(() => {
+        function handleClickOutside(e: MouseEvent) {
+            // contains() checks if the clicked element is inside the form
+            // if it's outside, collapse the form
+            if (formRef.current && !formRef.current.contains(e.target as Node)) {
+                setIsExpanded(false)
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside)
+        // cleanup: remove the listener when the component unmounts
+        return () => document.removeEventListener("mousedown", handleClickOutside)
+    }, []) // empty array = runs once on mount
 
     const handleSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault() // prevents page reload (default form behaviour)
@@ -31,7 +47,7 @@ export function CreateNoteForm({ refetch }: CreateNoteFormProps) {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-2 w-full max-w-md">
+        <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-2 w-full max-w-md">
             <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
