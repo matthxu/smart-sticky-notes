@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.note-scroll::-webkit-scrollbar {
+    width: 4px;
+}
+.note-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+.note-scroll::-webkit-scrollbar-thumb {
+    background: #d6b85a;
+    border-radius: 999px;
+}

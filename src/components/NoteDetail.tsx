@@ -37,7 +37,7 @@ export function NoteDetail({ note, update }: { note: Note; update: (id: string, 
                 ref={textareaRef}
                 value={localBody}
                 onChange={(e) => setLocalBody(e.target.value)}
-                className="w-full text-sm text-gray-700 bg-transparent resize-none outline-none focus:ring-0 overflow-y-auto max-h-[70vh]"
+                className="note-scroll w-full text-sm text-gray-700 bg-transparent resize-none outline-none focus:ring-0 overflow-y-auto max-h-[70vh]"
             />
         </div>
     )
