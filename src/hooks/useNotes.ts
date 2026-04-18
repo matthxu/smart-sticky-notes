@@ -20,10 +20,14 @@ export function useNotes() {
         setIsLoading(false)
     }
 
+    async function updateNote(id: string, title: string, body: string) {
+        await supabase.from("notes").update({ title, body }).eq("id", id)
+    }
+
     useEffect(() => {
         // runs ONCE on mount to populate home with all notes
         fetchNotes()
     }, [])
 
-    return { notes, isLoading, error, refetch: fetchNotes }
+    return { notes, isLoading, error, refetch: fetchNotes, update: updateNote }
 }

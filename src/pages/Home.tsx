@@ -7,7 +7,7 @@ import type { Note } from "@/types"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 
 export function Home() {
-    const { notes, isLoading, error, refetch } = useNotes()
+    const { notes, isLoading, error, refetch, update } = useNotes()
     const [selectedNote, setSelectedNote] = useState<Note | null>(null)
 
     function handleOpen(note: Note) {
@@ -39,8 +39,9 @@ export function Home() {
                 open={selectedNote !== null}
                 onOpenChange={(open) => {
                     if (!open) setSelectedNote(null)
+                    refetch()
                 }}>
-                <DialogContent>{selectedNote && <NoteDetail note={selectedNote} />}</DialogContent>
+                <DialogContent>{selectedNote && <NoteDetail note={selectedNote} update={update} />}</DialogContent>
             </Dialog>
         </>
     )
