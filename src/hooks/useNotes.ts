@@ -10,7 +10,9 @@ export function useNotes() {
     const [error, setError] = useState<string | null>(null)
 
     async function fetchNotes() {
-        const { data, error } = await supabase.from("notes").select("*")
+        const { data, error } = await supabase.from("notes").select("*").order("created_at", {
+            ascending: false,
+        })
 
         if (error) {
             setError(error.message)
