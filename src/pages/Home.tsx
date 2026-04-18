@@ -1,6 +1,7 @@
 import { CreateNoteForm } from "@/components/CreateNoteForm"
 import { useNotes } from "@/hooks/useNotes"
 import { NoteCard } from "@/components/NoteCard"
+import { NoteDetail } from "@/components/NoteDetail"
 import { useState } from "react"
 import type { Note } from "@/types"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
@@ -34,8 +35,12 @@ export function Home() {
                     </div>
                 </div>
             </div>
-            <Dialog>
-                
+            <Dialog
+                open={selectedNote !== null}
+                onOpenChange={(open) => {
+                    if (!open) setSelectedNote(null)
+                }}>
+                <DialogContent>{selectedNote && <NoteDetail note={selectedNote} />}</DialogContent>
             </Dialog>
         </>
     )
