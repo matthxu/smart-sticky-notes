@@ -12,6 +12,7 @@ export function CreateNoteForm({ refetch }: CreateNoteFormProps) {
     const [title, setTitle] = useState("")
     const [body, setBody] = useState("")
     const { user } = useAuth()
+    const [isExpanded, setIsExpanded] = useState(false)
 
     const handleSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault() // prevents page reload (default form behaviour)
@@ -23,6 +24,7 @@ export function CreateNoteForm({ refetch }: CreateNoteFormProps) {
             setTitle("")
             setBody("")
             refetch()
+            setIsExpanded(false)
         } catch (e) {
             console.error(e)
         }
@@ -33,22 +35,26 @@ export function CreateNoteForm({ refetch }: CreateNoteFormProps) {
             <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Title"
+                placeholder="Take a note..."
                 className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-300"
+                onClick={() => setIsExpanded(true)}
             />
-            <textarea
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                placeholder="Body"
-                rows={3}
-                className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-300 resize-none"
-            />
-            <button
-                type="submit"
-                className="self-end bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-medium text-sm px-4 py-2 rounded-md transition-colors"
-            >
-                Add Note
-            </button>
+            {isExpanded && (
+                <>
+                    <textarea
+                        value={body}
+                        onChange={(e) => setBody(e.target.value)}
+                        placeholder="Body"
+                        rows={3}
+                        className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-300 resize-none"
+                    />
+                    <button
+                        type="submit"
+                        className="self-end bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-medium text-sm px-4 py-2 rounded-md transition-colors">
+                        Add Note
+                    </button>
+                </>
+            )}
         </form>
     )
 }

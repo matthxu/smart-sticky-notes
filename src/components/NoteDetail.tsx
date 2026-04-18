@@ -14,7 +14,7 @@ export function NoteDetail({ note, update }: { note: Note; update: (id: string, 
         }
         const timer = setTimeout(() => {
             update(note.id, localTitle, localBody)
-        }, 300)
+        }, 100)
 
         return () => clearTimeout(timer)
     }, [localTitle, localBody])
