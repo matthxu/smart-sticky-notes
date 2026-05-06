@@ -1,6 +1,6 @@
 # Smart Notes
 
-An AI-powered note taking web app built with React, Supabase, and Claude. Inspired by Google Keep but with richer organisation features and AI integration for automatic categorisation, content expansion, and intelligent search.
+An AI-powered note taking web app built with React, Supabase, and Gemini. Inspired by Google Keep but with richer organisation features and AI integration for automatic categorisation, content expansion, and intelligent search.
 
 **[Live Demo (soon)](#)** · **[Portfolio](https://matthxu.com)**
 
@@ -27,7 +27,7 @@ An AI-powered note taking web app built with React, Supabase, and Claude. Inspir
 
 ## AI Architecture
 
-Claude Haiku handles frequent, automatic operations (auto-label, smart search). Claude Sonnet handles quality-sensitive, on-demand operations (expand note, tone rewrite, daily summary).
+Gemini Flash (via OpenRouter) handles all AI operations — auto-label, smart search, expand note, tone rewrite, and daily summary.
 
 ---
 ## Tech Stack
@@ -37,7 +37,7 @@ Claude Haiku handles frequent, automatic operations (auto-label, smart search). 
 | Frontend | React + TypeScript |
 | Styling | Tailwind CSS + shadcn/ui |
 | Database + Auth | Supabase (PostgreSQL + RLS) |
-| AI | Claude API |
+| AI | Gemini Flash via OpenRouter |
 | Hosting | Vercel |
 
 
@@ -72,7 +72,7 @@ Five tables with Row Level Security enforced — users can only access their own
 
 ## Getting Started
 
-**Prerequisites:** Node.js or Bun, a Supabase account, an Anthropic API key
+**Prerequisites:** Node.js or Bun, a Supabase account, an OpenRouter API key
 
 ```bash
 # Clone and install
@@ -82,7 +82,7 @@ bun install
 
 # Set up environment variables
 cp .env.example .env
-# Fill in VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_ANTHROPIC_API_KEY
+# Fill in VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_OPENROUTER_API_KEY
 
 # Run the Supabase SQL schema (see /supabase/schema.sql)
 

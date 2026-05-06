@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { createNote } from "@/lib/notes"
 import { createListItem } from "@/lib/listItems"
+import { autoLabel } from "@/lib/autoLabel"
 import { useAuth } from "@/lib/auth-context"
 import type { NoteType } from "@/types"
 
@@ -50,6 +51,9 @@ export function CreateNoteForm({ refetch }: CreateNoteFormProps) {
             setListItems([""])
             refetch()
             setIsExpanded(false)
+            if (note) {
+                autoLabel(note.id, title, type === "note" ? body : listItems.filter(Boolean).join(", ")).then(refetch)
+            }
         } catch (e) {
             console.error(e)
         }

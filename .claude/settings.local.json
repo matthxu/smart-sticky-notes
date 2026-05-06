@@ -3,7 +3,8 @@
     "allow": [
       "Skill(update-config)",
       "Bash(bun run *)",
-      "Bash(bunx tsc *)"
+      "Bash(bunx tsc *)",
+      "Bash(bun add *)"
     ]
   }
 }
