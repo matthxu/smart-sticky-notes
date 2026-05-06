@@ -30,7 +30,24 @@ export function NoteCard({ note, onOpen, onDelete, onRefetch }: {
             )}
 
             <h3 className="font-semibold text-gray-800 mb-1">{note.title}</h3>
-            <p className="text-sm text-gray-600 line-clamp-3">{note.body}</p>
+            {note.type === "list" && note.list_items ? (
+                <ul className="flex flex-col gap-0.5">
+                    {[...note.list_items]
+                        .sort((a, b) => a.display_order - b.display_order)
+                        .slice(0, 5)
+                        .map((item) => (
+                            <li key={item.id} className="flex items-center gap-1.5 text-sm text-gray-600">
+                                <span className={`w-3 h-3 rounded-sm border border-gray-400 flex-shrink-0 ${item.is_checked ? "bg-gray-400" : ""}`} />
+                                <span className={item.is_checked ? "line-through text-gray-400" : ""}>{item.content}</span>
+                            </li>
+                        ))}
+                    {note.list_items.length > 5 && (
+                        <li className="text-xs text-gray-400">+{note.list_items.length - 5} more</li>
+                    )}
+                </ul>
+            ) : (
+                <p className="text-sm text-gray-600 line-clamp-3">{note.body}</p>
+            )}
 
             {note.labels && note.labels.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-2">

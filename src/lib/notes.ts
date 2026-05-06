@@ -4,11 +4,12 @@ import { Note } from "@/types"
 // Service logic to add note object to db
 // Partial<Note> (TypeScript utility)  makes every field on Note optional 
 export async function createNote(fields: Partial<Note>) {
-    const { error } = await supabase.from("notes").insert({
-        type: "note", // by default
-        ...fields, // caller can override type, add title, body, etc.
-    })
+    const { data, error } = await supabase.from("notes").insert({
+        type: "note",
+        ...fields,
+    }).select().single()
     if (error) throw new Error(error.message)
+    return data
 }
 
 export async function updateNote(id: string, fields: Partial<Note>) {

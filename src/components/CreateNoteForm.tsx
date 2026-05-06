@@ -1,44 +1,44 @@
 import { useState, useEffect, useRef } from "react"
 import { createNote } from "@/lib/notes"
+import { createListItem } from "@/lib/listItems"
 import { useAuth } from "@/lib/auth-context"
+import type { NoteType } from "@/types"
 
-// explicitly describing type of prop (because typescript)
 interface CreateNoteFormProps {
     refetch: () => Promise<void>
 }
 
-// jsx for creating note. destructuring refetch prop
 export function CreateNoteForm({ refetch }: CreateNoteFormProps) {
     const [title, setTitle] = useState("")
     const [body, setBody] = useState("")
+    const [type, setType] = useState<NoteType>("note")
+    const [listItems, setListItems] = useState<string[]>([""])
     const { user } = useAuth()
     const [isExpanded, setIsExpanded] = useState(false)
     const formRef = useRef<HTMLFormElement>(null)
 
-    // attach a click listener to the entire document on mount
-    // every click on the page runs handleClickOutside
     useEffect(() => {
         function handleClickOutside(e: MouseEvent) {
-            // contains() checks if the clicked element is inside the form
-            // if it's outside, collapse the form
             if (formRef.current && !formRef.current.contains(e.target as Node)) {
                 setIsExpanded(false)
             }
         }
         document.addEventListener("mousedown", handleClickOutside)
-        // cleanup: remove the listener when the component unmounts
         return () => document.removeEventListener("mousedown", handleClickOutside)
-    }, []) // empty array = runs once on mount
+    }, [])
 
     const handleSubmit = async (e: React.SubmitEvent) => {
-        e.preventDefault() // prevents page reload (default form behaviour)
-
+        e.preventDefault()
         try {
-            // call createNote with title and body. id assigned from useAuth
-            await createNote({ user_id: user.id, title, body })
-            // clear the inputs after
+            const note = await createNote({ user_id: user.id, title, body: type === "note" ? body : null, type })
+            if (type === "list" && note) {
+                const filled = listItems.filter((s) => s.trim())
+                await Promise.all(filled.map((content, i) => createListItem(note.id, content, i)))
+            }
             setTitle("")
             setBody("")
+            setType("note")
+            setListItems([""])
             refetch()
             setIsExpanded(false)
         } catch (e) {
@@ -57,16 +57,55 @@ export function CreateNoteForm({ refetch }: CreateNoteFormProps) {
             />
             {isExpanded && (
                 <>
-                    <textarea
-                        value={body}
-                        onChange={(e) => setBody(e.target.value)}
-                        placeholder="Body"
-                        rows={3}
-                        className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-300 resize-none"
-                    />
+                    <div className="flex gap-2">
+                        {(["note", "list"] as NoteType[]).map((t) => (
+                            <button
+                                key={t}
+                                type="button"
+                                onClick={() => setType(t)}
+                                className={`text-xs px-3 py-1 rounded-full border transition-colors ${type === t ? "bg-yellow-400 border-yellow-400 text-gray-800" : "border-gray-300 text-gray-500 hover:border-yellow-300"}`}
+                            >
+                                {t}
+                            </button>
+                        ))}
+                    </div>
+
+                    {type === "note" ? (
+                        <textarea
+                            value={body}
+                            onChange={(e) => setBody(e.target.value)}
+                            placeholder="Body"
+                            rows={3}
+                            className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-300 resize-none"
+                        />
+                    ) : (
+                        <div className="flex flex-col gap-1 border border-gray-300 rounded-md px-3 py-2">
+                            {listItems.map((item, i) => (
+                                <input
+                                    key={i}
+                                    value={item}
+                                    onChange={(e) => {
+                                        const updated = [...listItems]
+                                        updated[i] = e.target.value
+                                        setListItems(updated)
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            e.preventDefault()
+                                            setListItems((prev) => [...prev, ""])
+                                        }
+                                    }}
+                                    placeholder={`Item ${i + 1}`}
+                                    className="text-sm outline-none text-gray-700 placeholder-gray-400"
+                                />
+                            ))}
+                        </div>
+                    )}
+
                     <button
                         type="submit"
-                        className="self-end bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-medium text-sm px-4 py-2 rounded-md transition-colors">
+                        className="self-end bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-medium text-sm px-4 py-2 rounded-md transition-colors"
+                    >
                         Add Note
                     </button>
                 </>
