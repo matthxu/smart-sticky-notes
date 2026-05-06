@@ -48,7 +48,7 @@ export function Home() {
                     if (!open) setSelectedNote(null)
                     refetch()
                 }}>
-                <DialogContent>{selectedNote && <NoteDetail note={selectedNote} update={update} />}</DialogContent>
+                <DialogContent>{selectedNote && <NoteDetail note={selectedNote} update={update} refetch={refetch} />}</DialogContent>
             </Dialog>
         </>
     )

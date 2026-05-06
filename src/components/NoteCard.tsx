@@ -1,5 +1,5 @@
 import { Trash2 } from "lucide-react"
-import type { Note } from "@/types"
+import type { Note, Label } from "@/types"
 
 export function NoteCard({ note, onOpen, onDelete }: {
     note: Note
@@ -13,7 +13,19 @@ export function NoteCard({ note, onOpen, onDelete }: {
         >
             <h3 className="font-semibold text-gray-800 mb-1">{note.title}</h3>
             <p className="text-sm text-gray-600 line-clamp-3">{note.body}</p>
-            <span className="text-xs text-gray-400 mt-2 block">{note.type}</span>
+
+            {note.labels && note.labels.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                    {note.labels.map((label: Label) => (
+                        <span
+                            key={label.id}
+                            className="text-xs bg-yellow-200 text-yellow-800 border border-yellow-300 rounded-full px-2 py-0.5"
+                        >
+                            {label.name}
+                        </span>
+                    ))}
+                </div>
+            )}
 
             <button
                 onClick={(e) => {
