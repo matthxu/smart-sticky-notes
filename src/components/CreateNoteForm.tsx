@@ -13,9 +13,11 @@ export function CreateNoteForm({ refetch }: CreateNoteFormProps) {
     const [body, setBody] = useState("")
     const [type, setType] = useState<NoteType>("note")
     const [listItems, setListItems] = useState<string[]>([""])
+    const [focusIndex, setFocusIndex] = useState<number | null>(null)
     const { user } = useAuth()
     const [isExpanded, setIsExpanded] = useState(false)
     const formRef = useRef<HTMLFormElement>(null)
+    const itemRefs = useRef<(HTMLInputElement | null)[]>([])
 
     useEffect(() => {
         function handleClickOutside(e: MouseEvent) {
@@ -26,6 +28,13 @@ export function CreateNoteForm({ refetch }: CreateNoteFormProps) {
         document.addEventListener("mousedown", handleClickOutside)
         return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [])
+
+    useEffect(() => {
+        if (focusIndex !== null) {
+            itemRefs.current[focusIndex]?.focus()
+            setFocusIndex(null)
+        }
+    }, [focusIndex, listItems])
 
     const handleSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault()
@@ -81,24 +90,39 @@ export function CreateNoteForm({ refetch }: CreateNoteFormProps) {
                     ) : (
                         <div className="flex flex-col gap-1 border border-gray-300 rounded-md px-3 py-2">
                             {listItems.map((item, i) => (
-                                <input
-                                    key={i}
-                                    value={item}
-                                    onChange={(e) => {
-                                        const updated = [...listItems]
-                                        updated[i] = e.target.value
-                                        setListItems(updated)
-                                    }}
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter") {
-                                            e.preventDefault()
-                                            setListItems((prev) => [...prev, ""])
-                                        }
-                                    }}
-                                    placeholder={`Item ${i + 1}`}
-                                    className="text-sm outline-none text-gray-700 placeholder-gray-400"
-                                />
+                                <div key={i} className="flex items-center gap-2">
+                                    <span className="w-3 h-3 rounded-sm border border-gray-300 flex-shrink-0" />
+                                    <input
+                                        ref={(el) => { itemRefs.current[i] = el }}
+                                        value={item}
+                                        onChange={(e) => {
+                                            const updated = [...listItems]
+                                            updated[i] = e.target.value
+                                            setListItems(updated)
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                e.preventDefault()
+                                                setListItems((prev) => [...prev, ""])
+                                                setFocusIndex(i + 1)
+                                            }
+                                        }}
+                                        placeholder={`Item ${i + 1}`}
+                                        className="flex-1 text-sm outline-none text-gray-700 placeholder-gray-400"
+                                    />
+                                </div>
                             ))}
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setListItems((prev) => [...prev, ""])
+                                    setFocusIndex(listItems.length)
+                                }}
+                                className="flex items-center gap-2 text-sm text-gray-400 hover:text-gray-600 mt-1"
+                            >
+                                <span className="w-3 h-3" />
+                                + Add item
+                            </button>
                         </div>
                     )}
 
