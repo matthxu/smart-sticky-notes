@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react"
-import { Tag, X, Plus, Trash2 } from "lucide-react"
+import { Tag, X, Plus, Trash2, Sparkles } from "lucide-react"
 import type { Note, ListItem } from "@/types"
 import { useLabels } from "@/hooks/useLabels"
 import { addLabelToNote, removeLabelFromNote } from "@/lib/labels"
 import { createListItem, updateListItem, deleteListItem } from "@/lib/listItems"
+import { expandNote } from "@/lib/expandNote"
 
 export function NoteDetail({ note, update, refetch }: {
     note: Note
@@ -19,6 +20,7 @@ export function NoteDetail({ note, update, refetch }: {
     const [newItemContent, setNewItemContent] = useState("")
     const [showLabelPicker, setShowLabelPicker] = useState(false)
     const [newLabelName, setNewLabelName] = useState("")
+    const [isExpanding, setIsExpanding] = useState(false)
     const isMounted = useRef(false)
     const textareaRef = useRef<HTMLTextAreaElement>(null)
     const pickerRef = useRef<HTMLDivElement>(null)
@@ -62,6 +64,16 @@ export function NoteDetail({ note, update, refetch }: {
             setNoteLabels((prev) => [...prev, { id: labelId, name: labelName, user_id: "" }])
         }
         refetch()
+    }
+
+    async function handleExpand() {
+        setIsExpanding(true)
+        try {
+            const expanded = await expandNote(localTitle, localBody)
+            setLocalBody(expanded)
+        } finally {
+            setIsExpanding(false)
+        }
     }
 
     async function handleToggleItem(id: string, current: boolean) {
@@ -138,12 +150,22 @@ export function NoteDetail({ note, update, refetch }: {
                     </div>
                 </div>
             ) : (
-                <textarea
-                    ref={textareaRef}
-                    value={localBody}
-                    onChange={(e) => setLocalBody(e.target.value)}
-                    className="note-scroll w-full text-sm text-gray-700 bg-transparent resize-none outline-none focus:ring-0 overflow-y-auto max-h-[70vh]"
-                />
+                <>
+                    <textarea
+                        ref={textareaRef}
+                        value={localBody}
+                        onChange={(e) => setLocalBody(e.target.value)}
+                        className="note-scroll w-full text-sm text-gray-700 bg-transparent resize-none outline-none focus:ring-0 overflow-y-auto max-h-[70vh]"
+                    />
+                    <button
+                        onClick={handleExpand}
+                        disabled={isExpanding}
+                        className="flex items-center gap-1 self-start text-xs text-gray-400 hover:text-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <Sparkles size={12} />
+                        {isExpanding ? "Expanding..." : "Expand"}
+                    </button>
+                </>
             )}
 
             <div className="flex flex-wrap gap-1 items-center mt-1">
