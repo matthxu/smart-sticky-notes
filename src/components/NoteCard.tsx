@@ -45,7 +45,7 @@ export function NoteCard({ note, onOpen, onDelete, onRefetch }: {
                     )}
                 </ul>
             ) : (
-                <p className="text-sm text-gray-600 line-clamp-3">{note.body}</p>
+                <p className="text-sm text-gray-600 line-clamp-3 whitespace-pre-line">{note.body}</p>
             )}
 
             {(note.is_archived || (note.labels && note.labels.length > 0)) && (

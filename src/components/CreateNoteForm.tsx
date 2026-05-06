@@ -86,7 +86,10 @@ export function CreateNoteForm({ refetch }: CreateNoteFormProps) {
                     {type === "note" ? (
                         <textarea
                             value={body}
-                            onChange={(e) => setBody(e.target.value)}
+                            onChange={(e) => {
+                                const lines = e.target.value.split("\n").map((l) => l.trimStart().replace(/^\*+\s*/, "• "))
+                                setBody(lines.join("\n"))
+                            }}
                             placeholder="Body"
                             rows={3}
                             className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-300 resize-none"

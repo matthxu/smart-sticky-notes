@@ -154,7 +154,10 @@ export function NoteDetail({ note, update, refetch }: {
                     <textarea
                         ref={textareaRef}
                         value={localBody}
-                        onChange={(e) => setLocalBody(e.target.value)}
+                        onChange={(e) => {
+                            const lines = e.target.value.split("\n").map((l) => l.trimStart().replace(/^\*+\s*/, "• "))
+                            setLocalBody(lines.join("\n"))
+                        }}
                         className="note-scroll w-full text-sm text-gray-700 bg-transparent resize-none outline-none focus:ring-0 overflow-y-auto max-h-[70vh]"
                     />
                     <button

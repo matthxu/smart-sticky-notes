@@ -15,6 +15,7 @@ Body: ${body || "(none)"}`,
         ],
     })
 
-    const addition = response.choices[0]?.message?.content?.trim() ?? ""
+    const addition = (response.choices[0]?.message?.content?.trim() ?? "")
+        .split("\n").map((line) => line.trimStart().replace(/^\*+\s*/, "• ")).join("\n")
     return addition ? `${body}\n\n${addition}` : body
 }
