@@ -7,7 +7,7 @@ export async function expandNote(title: string, body: string): Promise<string> {
         messages: [
             {
                 role: "user",
-                content: `Expand this note into more detail. Use short sentences and bullet points. Be practical and specific. Do not write introductions or conclusions. Return only the expanded note content, nothing else.
+                content: `Add 2-3 short bullet points to this note. Be direct and specific. No intros, no summaries, no filler. Return only the bullets.
 
 Title: ${title || "(none)"}
 Body: ${body || "(none)"}`,
@@ -15,5 +15,6 @@ Body: ${body || "(none)"}`,
         ],
     })
 
-    return response.choices[0]?.message?.content?.trim() ?? body
+    const addition = response.choices[0]?.message?.content?.trim() ?? ""
+    return addition ? `${body}\n\n${addition}` : body
 }
