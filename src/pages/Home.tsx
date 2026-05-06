@@ -5,6 +5,7 @@ import { NoteDetail } from "@/components/NoteDetail"
 import { useState } from "react"
 import type { Note } from "@/types"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
+import { deleteNote } from "@/lib/notes"
 
 export function Home() {
     const { notes, isLoading, error, refetch, update } = useNotes()
@@ -12,6 +13,12 @@ export function Home() {
 
     function handleOpen(note: Note) {
         setSelectedNote(note)
+    }
+
+    async function handleDelete(id: string) {
+        await deleteNote(id)
+        if (selectedNote?.id === id) setSelectedNote(null)
+        refetch()
     }
 
     if (isLoading) {
@@ -30,7 +37,7 @@ export function Home() {
                     <CreateNoteForm refetch={refetch} />
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-8">
                         {notes.map((note) => (
-                            <NoteCard key={note.id} note={note} onOpen={handleOpen} />
+                            <NoteCard key={note.id} note={note} onOpen={handleOpen} onDelete={handleDelete} />
                         ))}
                     </div>
                 </div>

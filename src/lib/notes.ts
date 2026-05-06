@@ -20,3 +20,13 @@ export async function deleteNote(id: string) {
     const { error } = await supabase.from("notes").delete().eq('id', id)
     if (error) throw new Error(error.message)
 }
+
+// Soft delete: marks note as deleted without removing the row.
+// Swap this into the UI once a Trash/restore flow is built.
+export async function softDeleteNote(id: string) {
+    const { error } = await supabase
+        .from("notes")
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', id)
+    if (error) throw new Error(error.message)
+}
