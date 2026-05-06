@@ -8,7 +8,8 @@ import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { deleteNote } from "@/lib/notes"
 
 export function Home() {
-    const { notes, isLoading, error, refetch, update } = useNotes()
+    const [showArchived, setShowArchived] = useState(false)
+    const { notes, isLoading, error, refetch, update } = useNotes(showArchived)
     const [selectedNote, setSelectedNote] = useState<Note | null>(null)
 
     function handleOpen(note: Note) {
@@ -32,12 +33,20 @@ export function Home() {
         <>
             <div className="min-h-screen bg-gray-50 px-6 py-10">
                 <div className="max-w-5xl mx-auto">
-                    <h1 className="text-2xl font-bold text-gray-800 mb-6">My Notes</h1>
+                    <div className="flex items-center justify-between mb-6">
+                        <h1 className="text-2xl font-bold text-gray-800">My Notes</h1>
+                        <button
+                            onClick={() => setShowArchived((v) => !v)}
+                            className="text-sm text-gray-500 hover:text-gray-700"
+                        >
+                            {showArchived ? "Hide archived" : "Show archived"}
+                        </button>
+                    </div>
 
                     <CreateNoteForm refetch={refetch} />
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-8">
                         {notes.map((note) => (
-                            <NoteCard key={note.id} note={note} onOpen={handleOpen} onDelete={handleDelete} />
+                            <NoteCard key={note.id} note={note} onOpen={handleOpen} onDelete={handleDelete} onRefetch={refetch} />
                         ))}
                     </div>
                 </div>

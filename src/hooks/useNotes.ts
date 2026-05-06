@@ -4,15 +4,24 @@ import { supabase } from "@/lib/supabase"
 import { useState, useEffect } from "react"
 import { Note } from "@/types"
 
-export function useNotes() {
+export function useNotes(showArchived = false) {
     const [notes, setNotes] = useState<Note[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
     async function fetchNotes() {
-        const { data, error } = await supabase.from("notes").select("*, labels(id, name)").order("created_at", {
-            ascending: false,
-        })
+        let query = supabase
+            .from("notes")
+            .select("*, labels(id, name)")
+            .is("deleted_at", null)
+            .order("is_pinned", { ascending: false })
+            .order("created_at", { ascending: false })
+
+        if (!showArchived) {
+            query = query.eq("is_archived", false)
+        }
+
+        const { data, error } = await query
 
         if (error) {
             setError(error.message)
@@ -27,9 +36,8 @@ export function useNotes() {
     }
 
     useEffect(() => {
-        // runs ONCE on mount to populate home with all notes
         fetchNotes()
-    }, [])
+    }, [showArchived])
 
     return { notes, isLoading, error, refetch: fetchNotes, update: updateNote }
 }
