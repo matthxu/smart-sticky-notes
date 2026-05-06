@@ -28,7 +28,6 @@ export function NoteCard({ note, onOpen, onDelete, onRefetch }: {
             {note.is_pinned && (
                 <Pin size={12} className="absolute top-2 right-2 text-yellow-500 fill-yellow-500" />
             )}
-
             <h3 className="font-semibold text-gray-800 mb-1">{note.title}</h3>
             {note.type === "list" && note.list_items ? (
                 <ul className="flex flex-col gap-0.5">
@@ -49,9 +48,14 @@ export function NoteCard({ note, onOpen, onDelete, onRefetch }: {
                 <p className="text-sm text-gray-600 line-clamp-3">{note.body}</p>
             )}
 
-            {note.labels && note.labels.length > 0 && (
+            {(note.is_archived || (note.labels && note.labels.length > 0)) && (
                 <div className="flex flex-wrap gap-1 mt-2">
-                    {note.labels.map((label: Label) => (
+                    {note.is_archived && (
+                        <span className="text-xs text-gray-400 bg-gray-100 border border-gray-200 rounded-full px-2 py-0.5">
+                            Archived
+                        </span>
+                    )}
+                    {note.labels?.map((label: Label) => (
                         <span
                             key={label.id}
                             className="text-xs bg-yellow-200 text-yellow-800 border border-yellow-300 rounded-full px-2 py-0.5"
