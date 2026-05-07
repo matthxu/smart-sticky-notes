@@ -8,6 +8,7 @@ import type { Note } from "@/types"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { softDeleteNote } from "@/lib/notes"
 import { Link } from "react-router-dom"
+import { getDailyDigest } from "@/lib/dailyDigest"
 
 type SortOption = "pinned" | "created" | "modified" | "alpha"
 
@@ -35,6 +36,8 @@ export function Home() {
     const { notes, isLoading, error, refetch, update } = useNotes(showArchived)
     const { labels } = useLabels()
     const [selectedNote, setSelectedNote] = useState<Note | null>(null)
+    const [digest, setDigest] = useState<string | null>(null)
+    const [isDigesting, setIsDigesting] = useState(false)
 
     function toggleLabel(id: string) {
         setActiveLabels((prev) => prev.includes(id) ? prev.filter((l) => l !== id) : [...prev, id])
@@ -48,6 +51,16 @@ export function Home() {
             : notes,
         sortBy
     )
+
+    async function handleDigest() {
+        setIsDigesting(true)
+        try {
+            const result = await getDailyDigest(notes)
+            setDigest(result)
+        } finally {
+            setIsDigesting(false)
+        }
+    }
 
     function handleOpen(note: Note) {
         setSelectedNote(note)
@@ -73,6 +86,13 @@ export function Home() {
                     <div className="flex items-center justify-between mb-6">
                         <h1 className="text-2xl font-bold text-gray-800">My Notes</h1>
                         <div className="flex items-center gap-4">
+                            <button
+                                onClick={handleDigest}
+                                disabled={isDigesting || notes.length === 0}
+                                className="text-sm text-gray-500 hover:text-gray-700 disabled:opacity-40"
+                            >
+                                {isDigesting ? "Generating..." : "Daily digest"}
+                            </button>
                             <select
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value as SortOption)}
@@ -116,6 +136,13 @@ export function Home() {
                     </div>
                 </div>
             </div>
+            <Dialog open={digest !== null} onOpenChange={(open) => { if (!open) setDigest(null) }}>
+                <DialogContent>
+                    <h2 className="text-lg font-semibold text-gray-800 mb-3">Daily Digest</h2>
+                    <p className="text-sm text-gray-700 whitespace-pre-line">{digest}</p>
+                </DialogContent>
+            </Dialog>
+
             <Dialog
                 open={selectedNote !== null}
                 onOpenChange={(open) => {
