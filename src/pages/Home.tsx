@@ -9,6 +9,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { softDeleteNote } from "@/lib/notes"
 import { Link } from "react-router-dom"
 import { getDailyDigest } from "@/lib/dailyDigest"
+import { useUserSettings } from "@/hooks/useUserSettings"
 
 type SortOption = "pinned" | "created" | "modified" | "alpha"
 
@@ -35,6 +36,7 @@ export function Home() {
     const [sortBy, setSortBy] = useState<SortOption>("pinned")
     const { notes, isLoading, error, refetch, update } = useNotes(showArchived)
     const { labels } = useLabels()
+    const { systemPrompt } = useUserSettings()
     const [selectedNote, setSelectedNote] = useState<Note | null>(null)
     const [digest, setDigest] = useState<string | null>(null)
     const [isDigesting, setIsDigesting] = useState(false)
@@ -55,7 +57,7 @@ export function Home() {
     async function handleDigest() {
         setIsDigesting(true)
         try {
-            const result = await getDailyDigest(notes)
+            const result = await getDailyDigest(notes, systemPrompt)
             setDigest(result)
         } finally {
             setIsDigesting(false)
@@ -110,6 +112,7 @@ export function Home() {
                                 {showArchived ? "Hide archived" : "Show archived"}
                             </button>
                             <Link to="/bin" className="text-sm text-gray-500 hover:text-gray-700">Bin</Link>
+                            <Link to="/settings" className="text-sm text-gray-500 hover:text-gray-700">Settings</Link>
                         </div>
                     </div>
 
@@ -149,7 +152,7 @@ export function Home() {
                     if (!open) setSelectedNote(null)
                     refetch()
                 }}>
-                <DialogContent>{selectedNote && <NoteDetail note={selectedNote} update={update} refetch={refetch} />}</DialogContent>
+                <DialogContent>{selectedNote && <NoteDetail note={selectedNote} update={update} refetch={refetch} systemPrompt={systemPrompt} />}</DialogContent>
             </Dialog>
         </>
     )

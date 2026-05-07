@@ -8,10 +8,11 @@ const prompts: Record<RewriteMode, string> = {
     summarise: "Summarise this note into 1-3 sentences. Return only the summary.",
 }
 
-export async function rewriteNote(body: string, mode: RewriteMode): Promise<string> {
+export async function rewriteNote(body: string, mode: RewriteMode, systemPrompt?: string): Promise<string> {
     const response = await claude.chat.completions.create({
         model: SMART_MODEL,
         max_tokens: 512,
+        system: systemPrompt || undefined,
         messages: [{ role: "user", content: `${prompts[mode]}\n\n${body}` }],
     })
     return response.choices[0]?.message?.content?.trim() ?? body

@@ -1,9 +1,10 @@
 import { claude, FAST_MODEL } from "@/lib/claude"
 
-export async function expandNote(title: string, body: string): Promise<string> {
+export async function expandNote(title: string, body: string, systemPrompt?: string): Promise<string> {
     const response = await claude.chat.completions.create({
         model: FAST_MODEL,
         max_tokens: 512,
+        system: systemPrompt || undefined,
         messages: [
             {
                 role: "user",

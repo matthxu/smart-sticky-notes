@@ -7,10 +7,11 @@ import { createListItem, updateListItem, deleteListItem } from "@/lib/listItems"
 import { expandNote } from "@/lib/expandNote"
 import { rewriteNote, type RewriteMode } from "@/lib/rewriteNote"
 
-export function NoteDetail({ note, update, refetch }: {
+export function NoteDetail({ note, update, refetch, systemPrompt }: {
     note: Note
     update: (id: string, title: string, body: string) => void
     refetch: () => void
+    systemPrompt?: string
 }) {
     const [localTitle, setLocalTitle] = useState(note.title ?? "")
     const [localBody, setLocalBody] = useState(note.body ?? "")
@@ -72,7 +73,7 @@ export function NoteDetail({ note, update, refetch }: {
     async function handleRewrite() {
         setIsRewriting(true)
         try {
-            const result = await rewriteNote(localBody, rewriteMode)
+            const result = await rewriteNote(localBody, rewriteMode, systemPrompt)
             setLocalBody(result)
         } finally {
             setIsRewriting(false)
@@ -82,7 +83,7 @@ export function NoteDetail({ note, update, refetch }: {
     async function handleExpand() {
         setIsExpanding(true)
         try {
-            const expanded = await expandNote(localTitle, localBody)
+            const expanded = await expandNote(localTitle, localBody, systemPrompt)
             setLocalBody(expanded)
         } finally {
             setIsExpanding(false)
