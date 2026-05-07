@@ -6,7 +6,8 @@ import { NoteDetail } from "@/components/NoteDetail"
 import { useState } from "react"
 import type { Note } from "@/types"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
-import { deleteNote } from "@/lib/notes"
+import { softDeleteNote } from "@/lib/notes"
+import { Link } from "react-router-dom"
 
 type SortOption = "pinned" | "created" | "modified" | "alpha"
 
@@ -53,7 +54,7 @@ export function Home() {
     }
 
     async function handleDelete(id: string) {
-        await deleteNote(id)
+        await softDeleteNote(id)
         if (selectedNote?.id === id) setSelectedNote(null)
         refetch()
     }
@@ -88,6 +89,7 @@ export function Home() {
                             >
                                 {showArchived ? "Hide archived" : "Show archived"}
                             </button>
+                            <Link to="/bin" className="text-sm text-gray-500 hover:text-gray-700">Bin</Link>
                         </div>
                     </div>
 
