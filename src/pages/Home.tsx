@@ -8,9 +8,29 @@ import type { Note } from "@/types"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { deleteNote } from "@/lib/notes"
 
+type SortOption = "pinned" | "created" | "modified" | "alpha"
+
+function sortNotes(notes: Note[], sort: SortOption): Note[] {
+    const sorted = [...notes]
+    switch (sort) {
+        case "pinned":
+            return sorted.sort((a, b) => {
+                if (a.is_pinned !== b.is_pinned) return a.is_pinned ? -1 : 1
+                return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            })
+        case "created":
+            return sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        case "modified":
+            return sorted.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
+        case "alpha":
+            return sorted.sort((a, b) => (a.title ?? "").localeCompare(b.title ?? ""))
+    }
+}
+
 export function Home() {
     const [showArchived, setShowArchived] = useState(false)
     const [activeLabels, setActiveLabels] = useState<string[]>([])
+    const [sortBy, setSortBy] = useState<SortOption>("pinned")
     const { notes, isLoading, error, refetch, update } = useNotes(showArchived)
     const { labels } = useLabels()
     const [selectedNote, setSelectedNote] = useState<Note | null>(null)
@@ -21,9 +41,12 @@ export function Home() {
 
     const usedLabels = labels.filter((l) => notes.some((n) => n.labels?.some((nl) => nl.id === l.id)))
 
-    const filteredNotes = activeLabels.length > 0
-        ? notes.filter((n) => activeLabels.every((id) => n.labels?.some((l) => l.id === id)))
-        : notes
+    const filteredNotes = sortNotes(
+        activeLabels.length > 0
+            ? notes.filter((n) => activeLabels.every((id) => n.labels?.some((l) => l.id === id)))
+            : notes,
+        sortBy
+    )
 
     function handleOpen(note: Note) {
         setSelectedNote(note)
@@ -48,12 +71,24 @@ export function Home() {
                 <div className="max-w-5xl mx-auto">
                     <div className="flex items-center justify-between mb-6">
                         <h1 className="text-2xl font-bold text-gray-800">My Notes</h1>
-                        <button
-                            onClick={() => setShowArchived((v) => !v)}
-                            className="text-sm text-gray-500 hover:text-gray-700"
-                        >
-                            {showArchived ? "Hide archived" : "Show archived"}
-                        </button>
+                        <div className="flex items-center gap-4">
+                            <select
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value as SortOption)}
+                                className="text-sm text-gray-500 border border-gray-200 rounded px-2 py-1 bg-white hover:border-gray-300 focus:outline-none"
+                            >
+                                <option value="pinned">Pinned first</option>
+                                <option value="created">Date created</option>
+                                <option value="modified">Date modified</option>
+                                <option value="alpha">Alphabetical</option>
+                            </select>
+                            <button
+                                onClick={() => setShowArchived((v) => !v)}
+                                className="text-sm text-gray-500 hover:text-gray-700"
+                            >
+                                {showArchived ? "Hide archived" : "Show archived"}
+                            </button>
+                        </div>
                     </div>
 
                     <CreateNoteForm refetch={refetch} />

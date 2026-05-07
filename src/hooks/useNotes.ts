@@ -14,8 +14,6 @@ export function useNotes(showArchived = false) {
             .from("notes")
             .select("*, labels(id, name), list_items(id, content, is_checked, display_order)")
             .is("deleted_at", null)
-            .order("is_pinned", { ascending: false })
-            .order("created_at", { ascending: false })
 
         if (!showArchived) {
             query = query.eq("is_archived", false)
