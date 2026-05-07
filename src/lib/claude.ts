@@ -6,4 +6,5 @@ export const claude = new OpenAI({
     dangerouslyAllowBrowser: true,
 })
 
-export const FAST_MODEL = "google/gemini-2.0-flash-001"
+export const FAST_MODEL = "anthropic/claude-haiku-4-5"
+export const SMART_MODEL = "anthropic/claude-sonnet-4-6"

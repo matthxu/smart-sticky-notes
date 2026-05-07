@@ -1,6 +1,6 @@
 # Smart Notes
 
-An AI-powered note taking web app built with React, Supabase, and Gemini. Inspired by Google Keep but with richer organisation features and AI integration for automatic categorisation, content expansion, and intelligent search.
+An AI-powered note taking web app built with React, Supabase, and Claude. Inspired by Google Keep but with richer organisation features and AI integration for automatic categorisation, content expansion, and intelligent search.
 
 **[Live Demo (soon)](#)** · **[Portfolio](https://matthxu.com)**
 
@@ -27,7 +27,9 @@ An AI-powered note taking web app built with React, Supabase, and Gemini. Inspir
 
 ## AI Architecture
 
-Gemini Flash (via OpenRouter) handles all AI operations — auto-label, smart search, expand note, tone rewrite, and daily summary.
+Two Claude models via OpenRouter handle all AI operations:
+- **Claude Haiku** — fast, frequent operations: auto-label and smart search
+- **Claude Sonnet** — quality-sensitive, on-demand: expand note, tone rewrite, daily digest
 
 ---
 ## Tech Stack
@@ -37,7 +39,7 @@ Gemini Flash (via OpenRouter) handles all AI operations — auto-label, smart se
 | Frontend | React + TypeScript |
 | Styling | Tailwind CSS + shadcn/ui |
 | Database + Auth | Supabase (PostgreSQL + RLS) |
-| AI | Gemini Flash via OpenRouter |
+| AI | Claude Haiku + Sonnet via OpenRouter |
 | Hosting | Vercel |
 
 

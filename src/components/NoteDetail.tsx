@@ -5,6 +5,7 @@ import { useLabels } from "@/hooks/useLabels"
 import { addLabelToNote, removeLabelFromNote } from "@/lib/labels"
 import { createListItem, updateListItem, deleteListItem } from "@/lib/listItems"
 import { expandNote } from "@/lib/expandNote"
+import { rewriteNote, type RewriteMode } from "@/lib/rewriteNote"
 
 export function NoteDetail({ note, update, refetch }: {
     note: Note
@@ -21,6 +22,8 @@ export function NoteDetail({ note, update, refetch }: {
     const [showLabelPicker, setShowLabelPicker] = useState(false)
     const [newLabelName, setNewLabelName] = useState("")
     const [isExpanding, setIsExpanding] = useState(false)
+    const [rewriteMode, setRewriteMode] = useState<RewriteMode>("bullets")
+    const [isRewriting, setIsRewriting] = useState(false)
     const isMounted = useRef(false)
     const textareaRef = useRef<HTMLTextAreaElement>(null)
     const pickerRef = useRef<HTMLDivElement>(null)
@@ -64,6 +67,16 @@ export function NoteDetail({ note, update, refetch }: {
             setNoteLabels((prev) => [...prev, { id: labelId, name: labelName, user_id: "" }])
         }
         refetch()
+    }
+
+    async function handleRewrite() {
+        setIsRewriting(true)
+        try {
+            const result = await rewriteNote(localBody, rewriteMode)
+            setLocalBody(result)
+        } finally {
+            setIsRewriting(false)
+        }
     }
 
     async function handleExpand() {
@@ -160,14 +173,32 @@ export function NoteDetail({ note, update, refetch }: {
                         }}
                         className="note-scroll w-full text-sm text-gray-700 bg-transparent resize-none outline-none focus:ring-0 overflow-y-auto max-h-[70vh]"
                     />
-                    <button
-                        onClick={handleExpand}
-                        disabled={isExpanding}
-                        className="flex items-center gap-1 self-start text-xs text-gray-400 hover:text-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <Sparkles size={12} />
-                        {isExpanding ? "Expanding..." : "Expand"}
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={handleExpand}
+                            disabled={isExpanding}
+                            className="flex items-center gap-1 text-xs text-gray-400 hover:text-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <Sparkles size={12} />
+                            {isExpanding ? "Expanding..." : "Expand"}
+                        </button>
+                        <select
+                            value={rewriteMode}
+                            onChange={(e) => setRewriteMode(e.target.value as RewriteMode)}
+                            className="text-xs text-gray-400 border border-gray-200 rounded px-1 py-0.5 bg-white focus:outline-none"
+                        >
+                            <option value="bullets">Bullet list</option>
+                            <option value="formal">Formal</option>
+                            <option value="summarise">Summarise</option>
+                        </select>
+                        <button
+                            onClick={handleRewrite}
+                            disabled={isRewriting}
+                            className="text-xs text-gray-400 hover:text-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {isRewriting ? "Rewriting..." : "Rewrite"}
+                        </button>
+                    </div>
                 </>
             )}
 
