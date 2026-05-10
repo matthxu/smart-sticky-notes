@@ -69,6 +69,9 @@ export function Login() {
             Sign up
           </Link>
         </p>
+        <p className="text-sm text-neutral-400 mt-2 text-center">
+          <Link to="/demo" className="hover:underline">Try the demo</Link>
+        </p>
       </div>
     </div>
   )
