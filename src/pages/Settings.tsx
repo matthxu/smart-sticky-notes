@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useUserSettings } from "@/hooks/useUserSettings"
 import { Link } from "react-router-dom"
 
@@ -7,8 +7,7 @@ export function Settings() {
     const [value, setValue] = useState("")
     const [saved, setSaved] = useState(false)
 
-    // Sync once loaded
-    if (systemPrompt && !value) setValue(systemPrompt)
+    useEffect(() => { if (systemPrompt) setValue(systemPrompt) }, [systemPrompt])
 
     async function handleSave() {
         await saveSystemPrompt(value)

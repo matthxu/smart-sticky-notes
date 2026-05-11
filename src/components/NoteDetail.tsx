@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { Tag, X, Plus, Trash2, Sparkles } from "lucide-react"
-import type { Note, ListItem } from "@/types"
+import type { Note, ListItem, Label } from "@/types"
 import { useLabels } from "@/hooks/useLabels"
 import { addLabelToNote, removeLabelFromNote } from "@/lib/labels"
 import { createListItem, updateListItem, deleteListItem } from "@/lib/listItems"
