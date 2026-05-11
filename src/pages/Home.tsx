@@ -75,11 +75,10 @@ export function Home() {
     }
 
     if (isLoading) {
-        return <p>Just a moment...</p>
+        return <div className="min-h-screen bg-gray-50 flex items-center justify-center text-sm text-gray-400">Loading...</div>
     }
     if (error) {
-        console.log(error)
-        return <p>Error: {error}</p>
+        return <div className="min-h-screen bg-gray-50 flex items-center justify-center text-sm text-red-400">{error}</div>
     }
     return (
         <>
@@ -87,7 +86,7 @@ export function Home() {
                 <div className="max-w-5xl mx-auto">
                     <div className="flex items-center justify-between mb-6">
                         <h1 className="text-2xl font-bold text-gray-800">My Notes</h1>
-                        <div className="flex items-center gap-4">
+                        <div className="flex flex-wrap items-center gap-4">
                             <button
                                 onClick={handleDigest}
                                 disabled={isDigesting || notes.length === 0}
@@ -132,6 +131,9 @@ export function Home() {
                         </div>
                     )}
 
+                    {filteredNotes.length === 0 && !isLoading && (
+                        <p className="text-sm text-gray-400 mt-8">No notes found.</p>
+                    )}
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
                         {filteredNotes.map((note) => (
                             <NoteCard key={note.id} note={note} onOpen={handleOpen} onDelete={handleDelete} onRefetch={refetch} />
@@ -142,7 +144,7 @@ export function Home() {
             <Dialog open={digest !== null} onOpenChange={(open) => { if (!open) setDigest(null) }}>
                 <DialogContent>
                     <h2 className="text-lg font-semibold text-gray-800 mb-3">Daily Digest</h2>
-                    <p className="text-sm text-gray-700 whitespace-pre-line">{digest}</p>
+                    <p className="text-sm text-gray-700 whitespace-pre-line max-h-96 overflow-y-auto">{digest}</p>
                 </DialogContent>
             </Dialog>
 
